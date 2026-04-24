@@ -27,3 +27,14 @@ def lagrange(x_data, y_data):
                 Li *= (x - x_data[j]) / (x_data[i] - x_data[j])
         sumPolinomio += Li * y_data[i]
     return sumPolinomio
+
+
+def minimos_cuadrados(x_data, y_data):
+    n = len(x_data)
+    Sx = sum(x_data)
+    Sy = sum(y_data)
+    Sxy = sum(x_data * y_data)
+    Sx2 = sum(x_data ** 2)
+    m = (n * Sxy - Sx * Sy) / (n * Sx2 - Sx ** 2)
+    b = (Sy - m * Sx) / n
+    return m, b
