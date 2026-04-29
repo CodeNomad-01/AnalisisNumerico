@@ -1,6 +1,6 @@
-from re import X
 import numpy as np
 import sel as s
+import sympy as sp
 
 def matriz(x_data):
     x = np.asarray(x_data, dtype=float)
@@ -13,12 +13,13 @@ def matriz(x_data):
 
 def polinomial_simple(x_data, y_data):
     A = matriz(x_data)
-    coef = s.eliminiacion_DD_pivoteo(A, y_data)
+    coef = s.eliminacion_DD_pivoteo(A, y_data)
     polinomio = sum(coef[i] * (x_data ** i) for i in range(len(x_data)))
     return polinomio
 
 
 def lagrange(x_data, y_data):
+    x = sp.symbols('x')
     sumPolinomio = 0
     for i in range(len(x_data)):
         Li = 1
