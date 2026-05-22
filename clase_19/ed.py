@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 
 f = lambda t,y: 0.28782*y*t
-t, w_res = edo.Euler(f, 0, 10, 0.5, 1)
+t, w_res = edo.Euler(f, 0, 1, 0.25, 0)
 
 plt.plot(t, w_res, 'o')
 plt.show()
