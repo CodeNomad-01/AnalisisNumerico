@@ -179,55 +179,82 @@ Los archivos `modelos.py`, `Ceros.py`, `ecuaciones.py` y `sel.py` son **cajas de
 
 ## 3-c) Alométrico vs isométrico
 
-**Qué se hizo:** Explicación con texto (no mucho código): comparar **a = 1** (isométrico: partes crecen igual) vs **a ≠ 1** (alométrico: una parte crece más rápido en proporción).
+**Qué se hizo:** Solo texto explicando qué significa el exponente **a** del modelo `y = c · x^a`.
 
-**Para qué:** Conectar el taller con la **idea biológica** del enunciado, no solo con números.
+**Para qué:** Conectar los números con la idea biológica del enunciado.
 
-**En simple:** Si a = 1, la tenaza y el cuerpo mantienen la misma proporción. Si a > 1, la tenaza gana proporción al crecer el cuerpo.
+**En simple:**
+
+- **Isométrico (a = 1):** la tenaza y el cuerpo crecen **a la par**. Si el cuerpo se duplica, la tenaza también. La proporción tenaza/cuerpo se mantiene igual.
+- **Alométrico (a ≠ 1):** una parte **gana o pierde proporción** mientras el animal crece. Si `a > 1`, la tenaza crece **más rápido** que el cuerpo (cangrejos viejos tienen tenazas relativamente más grandes). Si `a < 1`, la tenaza se queda atrás.
+
+**Idea para defender:** El número `a` no es un detalle técnico, es **el** dato biológico: dice si las partes del animal mantienen sus proporciones o no.
 
 ---
 
-## 3-d) Comparar exponentes a por fase
+## 3-d) Comparar los exponentes a por fase
 
-**Qué se hizo:** Se imprimieron **a_joven** y **a_maduro** (típicamente ambos > 1, con a_joven mayor).
+**Qué se hizo:** Se imprimieron los dos exponentes obtenidos en el 3-b: **a_joven** y **a_maduro**.
 
-**Para qué:** Responder con evidencia numérica la pregunta de alometría por etapa.
+**Para qué:** Tener una respuesta **con números**, no a ojo, sobre cómo cambia el crecimiento.
 
-**Interpretación:** En ambas fases la tenaza crece **más rápido en proporción** que el cuerpo; pero en la fase joven ese efecto es **más fuerte**.
+**Resultado típico:** ambos exponentes son **mayores que 1**, y **a_joven > a_maduro**.
+
+**Lectura simple:**
+
+- En las dos fases la tenaza crece **más rápido en proporción** que el cuerpo (alometría positiva).
+- Pero en la juventud ese efecto es **más fuerte**: cuando el cangrejo es pequeño, la tenaza se desarrolla muy aceleradamente; ya maduro, el crecimiento relativo se calma.
 
 ---
 
 ## 3-e) ¿En qué etapa crece más la tenaza en proporción?
 
-**Qué se hizo:** Comparar a_joven y a_maduro; concluir que **fase joven**.
+**Qué se hizo:** Comparar directamente `a_joven` con `a_maduro`.
 
-**Para qué:** Pregunta directa del taller: el exponente **a** mide justamente la “tasa relativa” de crecimiento de la tenaza respecto al cuerpo.
+**Respuesta:** En la **fase joven**, porque `a_joven` es mayor.
+
+**Para qué:** Es la pregunta directa del enunciado. El número `a` mide justamente “cuánto crece la tenaza por cada poco que crece el cuerpo”.
+
+**Idea para defender:** Tiene sentido en biología: la tenaza es importante para cortejo y defensa, así que el cangrejo joven **invierte** en desarrollarla rápido; al madurar, la energía se reparte más en reproducción y mantenimiento.
 
 ---
 
-## 3-f) Estimar tenaza para x = 500 mg y x = 2000 mg
+## 3-f) Estimar la tenaza para x = 500 mg y x = 2000 mg
 
-**Qué se hizo:** Función que elige modelo joven o maduro según si x está antes o después de x\*, y evalúa y.
+**Qué se hizo:** Una función pequeña que mira si el cuerpo está antes o después del umbral **x\* ≈ 871 mg**, y usa el modelo joven o el modelo maduro según corresponda.
 
-**Para qué:** Aplicar el modelo de dos fases a **casos concretos** del enunciado.
+**Para qué:** Aplicar el modelo de dos fases a **dos casos concretos** del taller.
 
-**Lógica:** 500 mg → aún “joven”; 2000 mg → ya en rama “madura”. Los valores salen del orden de magnitud de los datos, no absurdos.
+**Resultados:**
+
+- **x = 500 mg** → todavía es joven → tenaza ≈ **169 mg**.
+- **x = 2000 mg** → ya es maduro → tenaza ≈ **1169 mg**.
+
+**Por qué hay que partir en dos:** Si uno usara un solo modelo, una de las dos predicciones quedaría torcida. Cada fase tiene su propia curva, y cada peso del cuerpo se evalúa en la curva que le corresponde.
 
 ---
 
 ## 3-g) Predicción para x = 3000 mg
 
-**Qué se hizo:** Comparar predicción del **polinomio Lagrange** vs **modelo de dos fases**.
+**Qué se hizo:** Pedirle la predicción a **los dos** modelos del ejercicio 3:
 
-**Para qué:** Mostrar otra vez la lección del ejercicio 1: interpolación alta fuera del rango → **catastrófico**; modelo de tendencia por fases → **usable con cautela**.
+- El **polinomio de Lagrange** del 3-a.
+- El **modelo de dos fases** del 3-b (rama madura, porque 3000 > x\*).
 
-**Conclusión:** Lagrange puede dar pesos negativos o gigantes; el modelo de dos fases da algo interpretable (y/x razonable).
+**Para qué:** Es la misma lección del ejercicio 1, pero con datos nuevos: ver qué pasa al **extrapolar** mucho más allá del rango medido (último dato: 2235 mg).
+
+**Resultados:**
+
+- **Lagrange** entrega un número absurdo (del orden de **10²¹ mg**, incluso negativo). Es el **fenómeno de Runge** otra vez: el polinomio de grado alto se dispara fuera del rango.
+- **Modelo de dos fases** entrega ≈ **1960 mg**, con una proporción tenaza/cuerpo razonable.
+
+**Conclusión sencilla:** Para extrapolar conviene un modelo **de tendencia** (como el de dos fases), no uno que pase por todos los puntos. Es la misma moraleja del 1-c.
 
 ---
 
 # Ejercicio 4 — Lotka-Volterra: compradores y vendedores
 
-**Problema de fondo:** Dos poblaciones (compradores x, vendedores v) que crecen, se limitan entre sí y compiten. Las ecuaciones dicen cómo cambian x y v en el tiempo. No hay solución con lápiz y papel fácil → se **simula** con Euler.
+**Problema de fondo:** Hay dos poblaciones, **compradores (x)** y **vendedores (v)**, que crecen, se limitan a sí mismas y se afectan entre sí. Las ecuaciones dicen cómo cambian con el tiempo. No hay fórmula a mano, así que se **simula con Euler** en cada caso.
 
 ---
 
@@ -235,51 +262,65 @@ Los archivos `modelos.py`, `Ceros.py`, `ecuaciones.py` y `sel.py` son **cajas de
 
 **Qué se hizo siempre:**
 
-- Definir las ecuaciones del modelo con unos parámetros (a, b, m, c, d, n).
-- Integrar en el tiempo con **`Euler`** desde las poblaciones iniciales.
-- Graficar **x(t)**, **v(t)** y a veces **v vs x** (retrato de fases).
+- Definir el sistema con los parámetros que da el enunciado.
+- Avanzar en el tiempo con **`Euler`** desde `x(0) = 75`, `v(0) = 20`.
+- Hacer **tres gráficas**: x(t), v(t) y **x vs v** (el “camino” conjunto de las dos poblaciones, llamado plano de fase).
 
-**Para qué:** Ver si las dos poblaciones **conviven**, si una **muere**, si hay **oscilaciones**, etc., según cambian los parámetros.
+**Para qué:** Ver qué hace el sistema según los parámetros: si las dos poblaciones **conviven**, si **una se extingue**, si **oscilan**…
 
-**Por qué Euler aquí:** El taller pide simular el sistema; Euler es el método base del curso para EDOs. En el caso c se usa paso pequeño porque la dinámica es muy rápida.
+**Por qué Euler:** Es el método base del curso para EDOs. En el caso **c** se usa un paso `h` muy pequeño porque la dinámica es rapidísima y un paso grande haría que Euler “explote” (overflow).
 
 ---
 
-## 4-a) Parámetros “suaves” (b y n pequeños)
+## 4-a) Parámetros “suaves”
 
-**Qué se buscaba:** Comportamiento donde compradores y vendedores pueden **coexistir** en el tiempo (no se extingue uno de golpe).
+**Constantes:** a = 0.3, b = 0.01, m = 0.06, c = 0.03, d = 0.009, n = 0.0055.
 
-**Para qué:** Caso de referencia “equilibrado” del modelo de competencia.
+**Qué dice el enunciado:** que con estos valores ambos coexisten.
+
+**Qué pasa al simular:** los **compradores** crecen hasta su tope (≈ 30) y los **vendedores se extinguen**.
+
+**Por qué:** Si uno calcula el punto donde las dos poblaciones podrían estar quietas y juntas, sale **fuera del primer cuadrante** (no es una situación física). El único equilibrio “bueno” es x = 30, v = 0.
+
+**Idea para defender:** Aunque el enunciado dice que coexisten, las propias ecuaciones con esos números **no** dan coexistencia. La simulación lo confirma.
 
 ---
 
 ## 4-b) b grande (mucha competencia entre compradores)
 
-**Qué cambia:** b = 0.2 hace que los compradores se **frenen mucho entre sí**.
+**Constantes:** a = 0.26, **b = 0.2** (alto), m = 0.06, c = 0.06, d = 0.01, n = 0.015.
 
-**Para qué:** Ver cómo un solo parámetro puede hacer que una población **colapse** rápido.
+**Qué cambia:** un `b` grande significa que **los compradores se estorban mucho entre ellos**.
 
-**Interpretación simple:** “Demasiada competencia interna” → pocos compradores sobreviven.
+**Qué pasa al simular:** los **compradores se extinguen** (x → 0) y los **vendedores se estabilizan** en ≈ 6.
+
+**Idea para defender:** Demasiada competencia interna hunde a la población de compradores; los vendedores quedan solos y se acomodan en su propio tope.
 
 ---
 
 ## 4-c) n muy grande (compradores aplastan vendedores)
 
-**Qué cambia:** n = 4.2 → los compradores afectan **muchísimo** a los vendedores.
+**Constantes:** a = 0.26, b = 0.02, m = 0.06, c = 0.26, d = 0.9, **n = 4.2** (muy alto).
 
-**Para qué:** Caso extremo: los vendedores caen casi a cero; el sistema va hacia dominancia de compradores.
+**Qué cambia:** `n` enorme significa que **cada comprador frena muchísimo** a los vendedores.
 
-**Por qué paso h pequeño:** La curva cambia muy rápido; si el paso es grande, Euler “se pierde”.
+**Qué pasa al simular:** los **vendedores colapsan** muy rápido (v → 0) y los **compradores ganan**, estabilizándose en ≈ 13.
+
+**Por qué el paso `h = 0.001`:** la caída de los vendedores es tan brusca que con un paso grande Euler se va a infinito y rompe la simulación. Se usa un paso chico para que **siga la curva sin saltarse**.
 
 ---
 
 ## 4-d) Parámetros con equilibrio inestable
 
-**Qué se hizo:** Simular y comentar que existe un punto donde ambas poblaciones podrían quedarse quietas, pero es **inestable** (cualquier perturbación aleja el sistema).
+**Constantes:** a = 0.26, b = 0.021, m = 0.06, c = 0.06, d = 0.01, n = 0.01.
 
-**Para qué:** Entender que “equilibrio en papel” no siempre significa “equilibrio en la realidad”. Las trayectorias pueden converger a un lado u otro según condiciones iniciales.
+**Qué tienen de especial:** existe un punto **(x ≈ 2.56, v ≈ 3.44)** donde ambas poblaciones podrían quedarse quietas a la vez. Pero ese punto es **inestable** (como una bola arriba de un cerro): cualquier desvío y el sistema se va para otro lado.
 
-**Gráfica v vs x:** Muestra el “camino” conjunto de las dos poblaciones, no solo cada una contra el tiempo.
+**Qué pasa al simular:** con las condiciones iniciales del problema (75, 20), el sistema termina en **(0, 6)**: los **compradores se extinguen** y los vendedores se estabilizan.
+
+**Idea para defender:** Que un sistema “pueda” tener equilibrio en el papel no quiere decir que la realidad se quede ahí. Las condiciones iniciales **deciden** hacia cuál de los finales posibles cae todo.
+
+**Gráfica x vs v:** muestra el camino **conjunto** de las dos poblaciones; se ve claramente cómo se aleja del punto inestable y termina en uno de los lados.
 
 ---
 
