@@ -60,6 +60,8 @@ Los archivos `modelos.py`, `Ceros.py`, `ecuaciones.py` y `sel.py` son **cajas de
 
 **Por qué Lagrange:** Con n puntos, existe un único polinomio de grado n−1 que los une todos. Lagrange es una forma de construirlo.
 
+**Resultado obtenido:** `w(60) ≈ -4.22 × 10¹⁵ g` (negativo y descomunal, un pez no puede pesar eso).
+
 **Problema que se descubre (y por eso importa la sustentación):** Fuera del rango medido (extrapolar a 60 cm), el polinomio puede dar **números enormes o sin sentido**. Eso se llama fenómeno de **Runge**: encaja perfecto dentro, pero se vuelve inestable fuera. **Conclusión del ítem b:** el modelo **no es coherente** para predecir 60 cm, aunque sea perfecto dentro del intervalo.
 
 ---
@@ -76,9 +78,17 @@ Los archivos `modelos.py`, `Ceros.py`, `ecuaciones.py` y `sel.py` son **cajas de
 
 **Por qué log-log:** En biología, peso vs longitud suele comportarse como “si duplicas la longitud, el peso se multiplica por algo” (ley de potencia). En papel log-log, una potencia se ve como **línea recta**, y la recta es fácil de ajustar con mínimos cuadrados.
 
-**Por qué R²:** Para **elegir con número** entre “recta”, “L³” o “potencia”, no solo a ojo. El log-log dio el R² más alto → mejor explicación de los datos.
+**Por qué R²:** Para **elegir con número** entre “recta”, “L³” o “potencia”, no solo a ojo. Resultados obtenidos:
 
-**Por qué w = a·L^b con b ≈ 3:** Un exponente cerca de 3 es plausible (el peso escala algo como el volumen). La predicción en 60 cm (~1900 g) es del mismo orden que la curva, no un número astronómico como en Lagrange.
+- R²(L, w) = **0.9362** (recta simple, peor).
+- R²(L³, w) = **0.9919** (cúbica directa, intermedio).
+- R²(log L, log w) = **0.9962** (log-log, el mejor → modelo elegido).
+
+**Por qué w = a·L^b con b ≈ 3:** Un exponente cerca de 3 es plausible (el peso escala algo como el volumen). El ajuste log-log dio el modelo:
+
+`w(L) = 0.010737 · L^2.9526`
+
+y la predicción en 60 cm es **w(60) ≈ 1910.09 g**, del mismo orden que la curva, no un número astronómico como en Lagrange.
 
 **Conclusión del ítem c:** Modelo **coherente, pertinente y más adecuado** para extrapolar un poco, siempre diciendo que 60 cm está **fuera** de lo medido.
 
@@ -105,7 +115,7 @@ Los archivos `modelos.py`, `Ceros.py`, `ecuaciones.py` y `sel.py` son **cajas de
 **Qué se hizo:**
 
 - Se escribió el problema como **sistema de dos ecuaciones** (altura y velocidad).
-- Se simuló con **`Euler`** y **`Rk4`** (`ecuaciones.py`).
+- Se simuló con **`Euler`** y **`Rk4`** (`ecuaciones.py`) usando `T = 1/3 s` y `h = T/10`.
 - Se calculó la altura máxima teórica: **H = g·T²/8**.
 
 **Para qué:**
@@ -116,17 +126,34 @@ Los archivos `modelos.py`, `Ceros.py`, `ecuaciones.py` y `sel.py` son **cajas de
 
 **Por qué convertir a sistema de primer orden:** Las herramientas del curso avanzan en el tiempo con variables (y, v), no con derivadas sueltas.
 
-**Conclusión típica:** RK4 se acerca mucho más a H exacta que Euler con el mismo paso.
+**Resultados obtenidos:**
+
+- `H exacta = 0.4472 ft ≈ 5.37 pulgadas`.
+- `H Euler  = 1.2989 ft` (error ≈ **0.852**).
+- `H RK4    = 1.2795 ft` (error ≈ **0.832**).
+
+**Conclusión del ítem b:** RK4 se acerca más a H exacta que Euler con el mismo paso, al ser un método de orden superior; Euler **sobreestima** la altura máxima.
 
 ---
 
 ## 2-c) Error con distintos pasos h
 
-**Qué se hizo:** Se repitió la simulación con distintos números de pasos (n = 5, 10, 20…) y se midió el error en la altura máxima.
+**Qué se hizo:** Se repitió la simulación con distintos números de pasos (n = 5, 10, 20, 50, 100, 200) y se midió el error en la altura máxima.
+
+**Resultados:**
+
+| n   | h         | Err Euler | Err RK4   |
+|-----|-----------|-----------|-----------|
+| 5   | 0.066667  | 9.06e-01  | 8.65e-01  |
+| 10  | 0.033333  | 8.52e-01  | 8.32e-01  |
+| 20  | 0.016667  | 8.24e-01  | 8.15e-01  |
+| 50  | 0.006667  | 8.08e-01  | 8.04e-01  |
+| 100 | 0.003333  | 8.03e-01  | 8.01e-01  |
+| 200 | 0.001667  | 8.00e-01  | 7.99e-01  |
 
 **Para qué:** Ver **cómo mejora** la solución al hacer el paso más pequeño (más cálculos, más precisión).
 
-**Por qué importa:** En la práctica siempre hay que elegir: ¿paso grande y rápido, o paso chico y más exacto? Euler mejora ~al doble de pasos; RK4 mejora mucho más rápido.
+**Por qué importa:** En la práctica siempre hay que elegir: ¿paso grande y rápido, o paso chico y más exacto? Euler es **O(h)** (al duplicar n, el error tiende a reducirse a la mitad) y RK4 es **O(h⁴)** (mejora mucho más rápido), por eso RK4 entrega menor error que Euler con el mismo paso.
 
 ---
 
@@ -160,7 +187,15 @@ Los archivos `modelos.py`, `Ceros.py`, `ecuaciones.py` y `sel.py` son **cajas de
 
 **Por qué bisección:** La función “x + P(x) − 1100” cambia de signo en un intervalo; bisección encuentra el cero de forma segura sin derivadas complicadas.
 
-**Gráfica datos vs modelo:** Ver si el polinomio es razonable **dentro** del rango medido.
+**Resultados obtenidos:**
+
+- `x* = 871.1412 mg` (cuerpo en la madurez).
+- `y* = 228.8661 mg` (tenaza en la madurez).
+- `T* = x* + y* = 1100.0072 mg` (verifica el criterio del enunciado).
+
+El valor `x* ≈ 871 mg` es consistente con los datos: queda entre el último joven (x = 743.3, T = 1062.5) y el primer maduro (x = 872.4, T = 1290).
+
+**Gráfica datos vs modelo:** Ver si el polinomio es razonable **dentro** del rango medido (sí lo es; el problema vuelve a ser extrapolar fuera, donde aparece de nuevo el fenómeno de Runge).
 
 ---
 
@@ -174,6 +209,13 @@ Los archivos `modelos.py`, `Ceros.py`, `ecuaciones.py` y `sel.py` son **cajas de
 **Para qué:** La biología sugiere que el crecimiento **no es igual** en juventud y en adultez. Un solo polinomio o una sola recta mezcla comportamientos distintos.
 
 **Por qué dos modelos:** Cada fase tiene su propia “pendiente” en escala log-log (exponente **a**).
+
+**Resultados obtenidos:**
+
+- Modelo **joven**: `y = 0.006935 · x^1.6257`  (R² = 0.9961).
+- Modelo **maduro**: `y = 0.072752 · x^1.2742`  (R² = 0.9972).
+
+Los R² altos en ambas fases confirman que dos potencias distintas describen los datos mucho mejor que una sola curva.
 
 ---
 
@@ -198,7 +240,12 @@ Los archivos `modelos.py`, `Ceros.py`, `ecuaciones.py` y `sel.py` son **cajas de
 
 **Para qué:** Tener una respuesta **con números**, no a ojo, sobre cómo cambia el crecimiento.
 
-**Resultado típico:** ambos exponentes son **mayores que 1**, y **a_joven > a_maduro**.
+**Resultado del notebook:**
+
+- `a_joven  = 1.6257`
+- `a_maduro = 1.2742`
+
+Ambos exponentes son **mayores que 1**, y **a_joven > a_maduro**.
 
 **Lectura simple:**
 
@@ -225,10 +272,10 @@ Los archivos `modelos.py`, `Ceros.py`, `ecuaciones.py` y `sel.py` son **cajas de
 
 **Para qué:** Aplicar el modelo de dos fases a **dos casos concretos** del taller.
 
-**Resultados:**
+**Resultados del notebook:**
 
-- **x = 500 mg** → todavía es joven → tenaza ≈ **169 mg**.
-- **x = 2000 mg** → ya es maduro → tenaza ≈ **1169 mg**.
+- **x = 500 mg** (< x\*) → fase **joven** → `y = 169.38 mg`.
+- **x = 2000 mg** (> x\*) → fase **madura** → `y = 1169.40 mg`.
 
 **Por qué hay que partir en dos:** Si uno usara un solo modelo, una de las dos predicciones quedaría torcida. Cada fase tiene su propia curva, y cada peso del cuerpo se evalúa en la curva que le corresponde.
 
@@ -243,10 +290,10 @@ Los archivos `modelos.py`, `Ceros.py`, `ecuaciones.py` y `sel.py` son **cajas de
 
 **Para qué:** Es la misma lección del ejercicio 1, pero con datos nuevos: ver qué pasa al **extrapolar** mucho más allá del rango medido (último dato: 2235 mg).
 
-**Resultados:**
+**Resultados del notebook:**
 
-- **Lagrange** entrega un número absurdo (del orden de **10²¹ mg**, incluso negativo). Es el **fenómeno de Runge** otra vez: el polinomio de grado alto se dispara fuera del rango.
-- **Modelo de dos fases** entrega ≈ **1960 mg**, con una proporción tenaza/cuerpo razonable.
+- **Lagrange**: `y(3000) ≈ -2.23 × 10²¹ mg` — número absurdo y además negativo. Es el **fenómeno de Runge** otra vez: el polinomio de grado alto se dispara fuera del rango.
+- **Modelo de dos fases (rama madura)**: `y(3000) ≈ 1960.36 mg`, con una proporción tenaza/cuerpo razonable.
 
 **Conclusión sencilla:** Para extrapolar conviene un modelo **de tendencia** (como el de dos fases), no uno que pase por todos los puntos. Es la misma moraleja del 1-c.
 
@@ -278,7 +325,7 @@ Los archivos `modelos.py`, `Ceros.py`, `ecuaciones.py` y `sel.py` son **cajas de
 
 **Qué dice el enunciado:** que con estos valores ambos coexisten.
 
-**Qué pasa al simular:** los **compradores** crecen hasta su tope (≈ 30) y los **vendedores se extinguen**.
+**Qué pasa al simular:** los **compradores** crecen hasta su tope y los **vendedores se extinguen**. Resultado final: `x(T) = 30.0000, v(T) = 0.0000`.
 
 **Por qué:** Si uno calcula el punto donde las dos poblaciones podrían estar quietas y juntas, sale **fuera del primer cuadrante** (no es una situación física). El único equilibrio “bueno” es x = 30, v = 0.
 
@@ -292,7 +339,7 @@ Los archivos `modelos.py`, `Ceros.py`, `ecuaciones.py` y `sel.py` son **cajas de
 
 **Qué cambia:** un `b` grande significa que **los compradores se estorban mucho entre ellos**.
 
-**Qué pasa al simular:** los **compradores se extinguen** (x → 0) y los **vendedores se estabilizan** en ≈ 6.
+**Qué pasa al simular:** los **compradores se extinguen** y los **vendedores se estabilizan**. Resultado final: `x(T) = 0.0000, v(T) = 6.0000`.
 
 **Idea para defender:** Demasiada competencia interna hunde a la población de compradores; los vendedores quedan solos y se acomodan en su propio tope.
 
@@ -304,7 +351,7 @@ Los archivos `modelos.py`, `Ceros.py`, `ecuaciones.py` y `sel.py` son **cajas de
 
 **Qué cambia:** `n` enorme significa que **cada comprador frena muchísimo** a los vendedores.
 
-**Qué pasa al simular:** los **vendedores colapsan** muy rápido (v → 0) y los **compradores ganan**, estabilizándose en ≈ 13.
+**Qué pasa al simular:** los **vendedores colapsan** muy rápido y los **compradores ganan**. Resultado final: `x(T) = 13.0000, v(T) = 0.0000`.
 
 **Por qué el paso `h = 0.001`:** la caída de los vendedores es tan brusca que con un paso grande Euler se va a infinito y rompe la simulación. Se usa un paso chico para que **siga la curva sin saltarse**.
 
@@ -316,7 +363,7 @@ Los archivos `modelos.py`, `Ceros.py`, `ecuaciones.py` y `sel.py` son **cajas de
 
 **Qué tienen de especial:** existe un punto **(x ≈ 2.56, v ≈ 3.44)** donde ambas poblaciones podrían quedarse quietas a la vez. Pero ese punto es **inestable** (como una bola arriba de un cerro): cualquier desvío y el sistema se va para otro lado.
 
-**Qué pasa al simular:** con las condiciones iniciales del problema (75, 20), el sistema termina en **(0, 6)**: los **compradores se extinguen** y los vendedores se estabilizan.
+**Qué pasa al simular:** con las condiciones iniciales del problema (75, 20), el sistema termina en `x(T) = 0.0000, v(T) = 6.0000`: los **compradores se extinguen** y los vendedores se estabilizan.
 
 **Idea para defender:** Que un sistema “pueda” tener equilibrio en el papel no quiere decir que la realidad se quede ahí. Las condiciones iniciales **deciden** hacia cuál de los finales posibles cae todo.
 
