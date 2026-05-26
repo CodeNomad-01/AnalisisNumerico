@@ -31,6 +31,29 @@ def set_cell_shading(cell, fill_hex):
     tc_pr.append(shd)
 
 
+def set_paragraph_shading(paragraph, fill_hex):
+    p_pr = paragraph._p.get_or_add_pPr()
+    shd = OxmlElement("w:shd")
+    shd.set(qn("w:val"), "clear")
+    shd.set(qn("w:color"), "auto")
+    shd.set(qn("w:fill"), fill_hex)
+    p_pr.append(shd)
+
+
+def set_paragraph_border(paragraph, side, color_hex="888888", size="6"):
+    p_pr = paragraph._p.get_or_add_pPr()
+    p_bdr = p_pr.find(qn("w:pBdr"))
+    if p_bdr is None:
+        p_bdr = OxmlElement("w:pBdr")
+        p_pr.append(p_bdr)
+    border = OxmlElement(f"w:{side}")
+    border.set(qn("w:val"), "single")
+    border.set(qn("w:sz"), size)
+    border.set(qn("w:space"), "4")
+    border.set(qn("w:color"), color_hex)
+    p_bdr.append(border)
+
+
 def add_runs(paragraph, text):
     """Tokeniza 'text' con negrita / inline-code / itálica y añade runs."""
     pos = 0
@@ -87,10 +110,37 @@ def convert(md_text, doc):
                 i += 1
             p = doc.add_paragraph()
             p.paragraph_format.left_indent = Cm(0.4)
+            p.paragraph_format.space_before = Pt(4)
+            p.paragraph_format.space_after = Pt(4)
+            set_paragraph_shading(p, "F4F4F4")
+            set_paragraph_border(p, "left", "BBBBBB", "12")
             run = p.add_run("\n".join(buf))
             run.font.name = "Consolas"
             run.font.size = Pt(10)
+            run.font.color.rgb = RGBColor(0x33, 0x33, 0x33)
             i += 1
+            continue
+
+        # bloques de cita >  (narración de exposición)
+        if stripped.startswith(">"):
+            quote_buf = []
+            while i < len(lines) and lines[i].strip().startswith(">"):
+                content = lines[i].strip()[1:].lstrip()
+                quote_buf.append(content)
+                i += 1
+            p = doc.add_paragraph()
+            p.paragraph_format.left_indent = Cm(0.6)
+            p.paragraph_format.right_indent = Cm(0.3)
+            p.paragraph_format.space_before = Pt(4)
+            p.paragraph_format.space_after = Pt(6)
+            set_paragraph_shading(p, "FBF7E6")
+            set_paragraph_border(p, "left", "C9A227", "18")
+            for idx, qline in enumerate(quote_buf):
+                if idx > 0:
+                    p.add_run("\n")
+                add_runs(p, qline)
+            for run in p.runs:
+                run.italic = True
             continue
 
         # encabezados
