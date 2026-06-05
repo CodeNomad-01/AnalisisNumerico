@@ -13,10 +13,11 @@ def matriz(x_data):
     return A
 
 def polinomial_simple(x_data, y_data):
+    x = sp.symbols('x')
     A = matriz(x_data)
     coef = s.eliminacion_DD_pivoteo(A, y_data)
-    polinomio = sum(coef[i] * (x_data ** i) for i in range(len(x_data)))
-    return polinomio
+    polinomio = sum(coef[i] * x**i for i in range(len(x_data)))
+    return sp.expand(polinomio)
 
 
 def lagrange(x_data, y_data):
@@ -28,7 +29,7 @@ def lagrange(x_data, y_data):
             if j != i:
                 Li *= (x - x_data[j]) / (x_data[i] - x_data[j])
         sumPolinomio += Li * y_data[i]
-    return sumPolinomio
+    return sp.expand(sumPolinomio)
 
 
 def minimos_cuadrados(x_data, y_data):
